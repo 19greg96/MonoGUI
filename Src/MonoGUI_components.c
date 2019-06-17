@@ -1,8 +1,8 @@
 
-#include "GUI.h"
-#include "GUI_components.h"
+#include <MonoGUI.h>
+#include <MonoGUI_components.h>
+#include <MonoGUI_font_legible3x5_6pt.h>
 #include "BSP_ADC.h"
-#include "GUI_font_legible3x5_6pt.h"
 #include <stdlib.h>
 #include <string.h>
 

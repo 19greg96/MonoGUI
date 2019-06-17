@@ -2,8 +2,8 @@
 //  Font data for Legible 3x5 6pt
 // 
 
-#include "GUI_font.h"
-#include "GUI_font_legible3x5_6pt.h"
+#include <MonoGUI_font.h>
+#include <MonoGUI_font_legible3x5_6pt.h>
 
 // Character bitmaps for Legible 3x5 6pt
 const unsigned char GUI_font_legible3x5_6ptBitmaps[] = 
