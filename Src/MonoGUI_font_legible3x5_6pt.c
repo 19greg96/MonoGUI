@@ -6,7 +6,7 @@
 #include <MonoGUI_font_legible3x5_6pt.h>
 
 // Character bitmaps for Legible 3x5 6pt
-const unsigned char GUI_font_legible3x5_6ptBitmaps[] = 
+const unsigned char MonoGUI_font_legible3x5_6ptBitmaps[] = 
 {
 	// @0 ' ' (2 pixels wide)
 	0b00000000, //   
@@ -773,7 +773,7 @@ const unsigned char GUI_font_legible3x5_6ptBitmaps[] =
 
 // Character descriptors for Legible 3x5 6pt
 // { [Char width in bits], [Offset into legible3x5_6ptCharBitmaps in bytes] }
-const GUI_FontCharInfoTypedef GUI_font_legible3x5_6ptDescriptors[] = 
+const MonoGUI_FontCharInfoTypedef MonoGUI_font_legible3x5_6ptDescriptors[] = 
 {
 	{2, 0}, 		//   
 	{1, 6}, 		// ! 
@@ -873,12 +873,12 @@ const GUI_FontCharInfoTypedef GUI_font_legible3x5_6ptDescriptors[] =
 };
 
 // Font information for Legible 3x5 6pt
-GUI_FontInfoTypedef GUI_font_legible3x5_6ptFontInfo =
+MonoGUI_FontInfoTypedef MonoGUI_font_legible3x5_6ptFontInfo =
 {
 	6, //  Character height
 	' ', //  Start character
 	'~', //  End character
-	GUI_font_legible3x5_6ptDescriptors, //  Character descriptor array
-	GUI_font_legible3x5_6ptBitmaps, //  Character bitmap array
+	MonoGUI_font_legible3x5_6ptDescriptors, //  Character descriptor array
+	MonoGUI_font_legible3x5_6ptBitmaps, //  Character bitmap array
 };
 

@@ -4,36 +4,36 @@
 #include <stdio.h>
 #include <string.h>
 
-void GUI_init() {
-	GUI_idCounter = 0;
-	GUI_num_screens = 0;
-	GUI_curr_screen = -1;
+void MonoGUI_init() {
+	MonoGUI_idCounter = 0;
+	MonoGUI_num_screens = 0;
+	MonoGUI_curr_screen = -1;
 	
-	GUI_selected_component = NULL;
+	MonoGUI_selected_component = NULL;
 }
 
-void GUI_render() {
-	if (GUI_curr_screen == -1) {
+void MonoGUI_render() {
+	if (MonoGUI_curr_screen == -1) {
 		return;
 	}
 	MonoGFX_clear();
-	for (uint32_t i = 0; i < GUI_screens[GUI_curr_screen]->numComponents; i ++) {
-		GUI_component_render(GUI_screens[GUI_curr_screen]->components[i]);
+	for (uint32_t i = 0; i < MonoGUI_screens[MonoGUI_curr_screen]->numComponents; i ++) {
+		MonoGUI_component_render(MonoGUI_screens[MonoGUI_curr_screen]->components[i]);
 	}
 }
-void GUI_close_all_menus() {
-	for (uint32_t i = 0; i < GUI_num_screens; i ++) {
-		for (uint32_t j = 0; j < GUI_screens[i]->numComponents; j ++) {
-			if (GUI_screens[i]->components[j]->type == GUI_COMPONENT_MENU_BUTTON) {
-				GUI_MenuButton* mb = (GUI_MenuButton*)GUI_screens[i]->components[j]->component;
+void MonoGUI_close_all_menus() {
+	for (uint32_t i = 0; i < MonoGUI_num_screens; i ++) {
+		for (uint32_t j = 0; j < MonoGUI_screens[i]->numComponents; j ++) {
+			if (MonoGUI_screens[i]->components[j]->type == MonoGUI_COMPONENT_MENU_BUTTON) {
+				MonoGUI_MenuButton* mb = (MonoGUI_MenuButton*)MonoGUI_screens[i]->components[j]->component;
 				
 				// if current menu contains selected item, deselect the item
-				GUI_MenuColumn* tmp = mb->menu->columns;
+				MonoGUI_MenuColumn* tmp = mb->menu->columns;
 				if (tmp != NULL) {
 					do {
 						for (uint32_t k = 0; k < tmp->numRows; k ++) {
 							if (tmp->rows[k]->selected) {
-								GUI_select_component(NULL);
+								MonoGUI_select_component(NULL);
 							}
 						}
 						tmp = tmp->nextCol;
@@ -42,178 +42,178 @@ void GUI_close_all_menus() {
 				
 				// close the menu
 				if (mb->toggleButton->checked) {
-					GUI_toggleButton_click(mb->toggleButton);
+					MonoGUI_toggleButton_click(mb->toggleButton);
 				}
 			}
 		}
 	}
 }
-void GUI_set_screen(int32_t screen) {
-	if (screen > GUI_num_screens) {
+void MonoGUI_set_screen(int32_t screen) {
+	if (screen > MonoGUI_num_screens) {
 		return;
 	}
-	GUI_close_all_menus();
-	GUI_select_component(NULL);
-	GUI_curr_screen = screen;
+	MonoGUI_close_all_menus();
+	MonoGUI_select_component(NULL);
+	MonoGUI_curr_screen = screen;
 }
 
-GUI_Component* GUI_component_set_select_state(GUI_Component* component, uint8_t selectState) {
+MonoGUI_Component* MonoGUI_component_set_select_state(MonoGUI_Component* component, uint8_t selectState) {
 	if (component == NULL) {
 		return NULL;
 	}
 	switch (component->type) {
-		case GUI_COMPONENT_BUTTON:
-		case GUI_COMPONENT_GRAPH_LABEL:
-		case GUI_COMPONENT_SCROLL_BUTTON:
-		case GUI_COMPONENT_RANGE:
-		case GUI_COMPONENT_TOGGLE_BUTTON:
-		case GUI_COMPONENT_RADIO_BUTTON:
-		case GUI_COMPONENT_MENU_BUTTON:
+		case MonoGUI_COMPONENT_BUTTON:
+		case MonoGUI_COMPONENT_GRAPH_LABEL:
+		case MonoGUI_COMPONENT_SCROLL_BUTTON:
+		case MonoGUI_COMPONENT_RANGE:
+		case MonoGUI_COMPONENT_TOGGLE_BUTTON:
+		case MonoGUI_COMPONENT_RADIO_BUTTON:
+		case MonoGUI_COMPONENT_MENU_BUTTON:
 			component->selected = selectState;
 			return component;
 			break;
-		case GUI_COMPONENT_LABEL: // can't be selected
-		case GUI_COMPONENT_SPRITE:
-		case GUI_COMPONENT_GRAPH:
+		case MonoGUI_COMPONENT_LABEL: // can't be selected
+		case MonoGUI_COMPONENT_SPRITE:
+		case MonoGUI_COMPONENT_GRAPH:
 			break;
-		case GUI_COMPONENT_MENU_COLUMN: {
-			if (((GUI_MenuColumn*)component->component)->numRows) {
-				return GUI_component_set_select_state(((GUI_MenuColumn*)component->component)->rows[0], selectState);
+		case MonoGUI_COMPONENT_MENU_COLUMN: {
+			if (((MonoGUI_MenuColumn*)component->component)->numRows) {
+				return MonoGUI_component_set_select_state(((MonoGUI_MenuColumn*)component->component)->rows[0], selectState);
 			}
 		} break;
-		case GUI_COMPONENT_MENU: {
-			if (((GUI_Menu*)component->component)->columns != NULL) {
-				if (((GUI_Menu*)component->component)->columns->numRows) {
-					return GUI_component_set_select_state(((GUI_Menu*)component->component)->columns->rows[0], selectState);
+		case MonoGUI_COMPONENT_MENU: {
+			if (((MonoGUI_Menu*)component->component)->columns != NULL) {
+				if (((MonoGUI_Menu*)component->component)->columns->numRows) {
+					return MonoGUI_component_set_select_state(((MonoGUI_Menu*)component->component)->columns->rows[0], selectState);
 				}
 			}
 		} break;
-		case GUI_COMPONENT_SCREEN: {
-			if (((GUI_Screen*)component->component)->numComponents) {
-				return GUI_component_set_select_state(((GUI_Screen*)component->component)->components[0], selectState);
+		case MonoGUI_COMPONENT_SCREEN: {
+			if (((MonoGUI_Screen*)component->component)->numComponents) {
+				return MonoGUI_component_set_select_state(((MonoGUI_Screen*)component->component)->components[0], selectState);
 			}
 		} break;
 	}
 	return NULL;
 }
-void GUI_select_component(GUI_Component* component) {
-	if (GUI_selected_component != NULL) {
-		GUI_selected_component->selected = 0;
-		GUI_selected_component = NULL;
+void MonoGUI_select_component(MonoGUI_Component* component) {
+	if (MonoGUI_selected_component != NULL) {
+		MonoGUI_selected_component->selected = 0;
+		MonoGUI_selected_component = NULL;
 	}
 	if (component != NULL) {
-		GUI_selected_component = GUI_component_set_select_state(component, 1);
+		MonoGUI_selected_component = MonoGUI_component_set_select_state(component, 1);
 	}
 }
-void GUI_click_component(GUI_Component* component) {
+void MonoGUI_click_component(MonoGUI_Component* component) {
 	void* c = component->component;
 	
 	switch (component->type) {
-		case GUI_COMPONENT_BUTTON: {
-			if (((GUI_Button*)c)->onClick != NULL) {
-				((GUI_Button*)c)->onClick((GUI_Button*)c);
+		case MonoGUI_COMPONENT_BUTTON: {
+			if (((MonoGUI_Button*)c)->onClick != NULL) {
+				((MonoGUI_Button*)c)->onClick((MonoGUI_Button*)c);
 			}
 		} break;
-		case GUI_COMPONENT_SCROLL_BUTTON: {
-			GUI_close_all_menus();
-			GUI_select_component(component);
-			if (((GUI_ScrollButton*)c)->button->onClick != NULL) {
-				((GUI_ScrollButton*)c)->button->onClick((GUI_ScrollButton*)c);
+		case MonoGUI_COMPONENT_SCROLL_BUTTON: {
+			MonoGUI_close_all_menus();
+			MonoGUI_select_component(component);
+			if (((MonoGUI_ScrollButton*)c)->button->onClick != NULL) {
+				((MonoGUI_ScrollButton*)c)->button->onClick((MonoGUI_ScrollButton*)c);
 			}
 		} break;
-		case GUI_COMPONENT_GRAPH_LABEL: {
-			GUI_close_all_menus();
-			GUI_select_component(component);
-			if (((GUI_GraphLabel*)c)->scrollButton->button->onClick) {
-				((GUI_GraphLabel*)c)->scrollButton->button->onClick((GUI_GraphLabel*)c);
+		case MonoGUI_COMPONENT_GRAPH_LABEL: {
+			MonoGUI_close_all_menus();
+			MonoGUI_select_component(component);
+			if (((MonoGUI_GraphLabel*)c)->scrollButton->button->onClick) {
+				((MonoGUI_GraphLabel*)c)->scrollButton->button->onClick((MonoGUI_GraphLabel*)c);
 			}
 		} break;
-		case GUI_COMPONENT_RANGE: {
-			GUI_close_all_menus();
-			GUI_select_component(component);
-			if (((GUI_Range*)c)->scrollButton->button->onClick) {
-				((GUI_Range*)c)->scrollButton->button->onClick((GUI_Range*)c);
+		case MonoGUI_COMPONENT_RANGE: {
+			MonoGUI_close_all_menus();
+			MonoGUI_select_component(component);
+			if (((MonoGUI_Range*)c)->scrollButton->button->onClick) {
+				((MonoGUI_Range*)c)->scrollButton->button->onClick((MonoGUI_Range*)c);
 			}
 		} break;
-		case GUI_COMPONENT_TOGGLE_BUTTON: { //
-			// GUI_close_all_menus(); // this would close menu when we are in it
-			GUI_toggleButton_click((GUI_ToggleButton*)c);
+		case MonoGUI_COMPONENT_TOGGLE_BUTTON: { //
+			// MonoGUI_close_all_menus(); // this would close menu when we are in it
+			MonoGUI_toggleButton_click((MonoGUI_ToggleButton*)c);
 		} break;
-		case GUI_COMPONENT_RADIO_BUTTON: {
-			GUI_radioButton_click((GUI_RadioButton*)c);
+		case MonoGUI_COMPONENT_RADIO_BUTTON: {
+			MonoGUI_radioButton_click((MonoGUI_RadioButton*)c);
 		} break;
-		case GUI_COMPONENT_MENU_BUTTON:  {
-			GUI_menuButton_click((GUI_MenuButton*)c); // GUI_close_all_menus(); Handled inside, to enable toggle behavior 
+		case MonoGUI_COMPONENT_MENU_BUTTON:  {
+			MonoGUI_menuButton_click((MonoGUI_MenuButton*)c); // MonoGUI_close_all_menus(); Handled inside, to enable toggle behavior 
 		} break;
 		default:
 			break;
 	}
 }
-void GUI_tab(int16_t delta) {
+void MonoGUI_tab(int16_t delta) {
 	if (delta > 0) {
-		GUI_Component* tmp = GUI_selected_component->tabNext;
+		MonoGUI_Component* tmp = MonoGUI_selected_component->tabNext;
 		while (tmp != NULL && tmp->visible == 0) { // find next non null, visible component
-			if (tmp == GUI_selected_component) { // prevent infinite cycle, if we reach the first element, return
+			if (tmp == MonoGUI_selected_component) { // prevent infinite cycle, if we reach the first element, return
 				return;
 			}
 			tmp = tmp->tabNext;
 		}
-		GUI_select_component(tmp);
+		MonoGUI_select_component(tmp);
 	} else if (delta < 0) {
-		GUI_Component* tmp = GUI_selected_component->tabPrev;
+		MonoGUI_Component* tmp = MonoGUI_selected_component->tabPrev;
 		while (tmp != NULL && tmp->visible == 0) { // find prev non null, visible component
-			if (tmp == GUI_selected_component) { // prevent infinite cycle, if we reach the first element, return
+			if (tmp == MonoGUI_selected_component) { // prevent infinite cycle, if we reach the first element, return
 				return;
 			}
 			tmp = tmp->tabPrev;
 		}
-		GUI_select_component(GUI_selected_component->tabPrev);
+		MonoGUI_select_component(MonoGUI_selected_component->tabPrev);
 	}
 }
-void GUI_scroll(int16_t delta, uint8_t largeStep) { // called externally
-	if (GUI_selected_component == NULL) {
+void MonoGUI_scroll(int16_t delta, uint8_t largeStep) { // called externally
+	if (MonoGUI_selected_component == NULL) {
 		return;
 	}
-	switch (GUI_selected_component->type) {
-		case GUI_COMPONENT_SCROLL_BUTTON:
-			GUI_scrollButton_scroll((GUI_ScrollButton*)GUI_selected_component->component, delta, largeStep);
+	switch (MonoGUI_selected_component->type) {
+		case MonoGUI_COMPONENT_SCROLL_BUTTON:
+			MonoGUI_scrollButton_scroll((MonoGUI_ScrollButton*)MonoGUI_selected_component->component, delta, largeStep);
 			break;
-		case GUI_COMPONENT_RANGE:
-			GUI_scrollButton_scroll(((GUI_Range*)GUI_selected_component->component)->scrollButton, delta, largeStep);
+		case MonoGUI_COMPONENT_RANGE:
+			MonoGUI_scrollButton_scroll(((MonoGUI_Range*)MonoGUI_selected_component->component)->scrollButton, delta, largeStep);
 			break;
-		case GUI_COMPONENT_GRAPH_LABEL:
-			GUI_scrollButton_scroll(((GUI_GraphLabel*)GUI_selected_component->component)->scrollButton, delta, largeStep);
+		case MonoGUI_COMPONENT_GRAPH_LABEL:
+			MonoGUI_scrollButton_scroll(((MonoGUI_GraphLabel*)MonoGUI_selected_component->component)->scrollButton, delta, largeStep);
 			break;
 		default:
-			GUI_tab(delta);
+			MonoGUI_tab(delta);
 		break;
 	}
 }
-void GUI_mainBtnClick() { // called externally
-	if (GUI_selected_component == NULL) {
+void MonoGUI_mainBtnClick() { // called externally
+	if (MonoGUI_selected_component == NULL) {
 		return;
 	}
-	GUI_click_component(GUI_selected_component);
+	MonoGUI_click_component(MonoGUI_selected_component);
 }
 
 
-uint32_t GUI_register_font(GUI_FontInfoTypedef * font) {
-	GUI_fonts[GUI_num_fonts] = font;
+uint32_t MonoGUI_register_font(MonoGUI_FontInfoTypedef * font) {
+	MonoGUI_fonts[MonoGUI_num_fonts] = font;
 	
-	GUI_num_fonts ++;
-	return GUI_num_fonts - 1;
+	MonoGUI_num_fonts ++;
+	return MonoGUI_num_fonts - 1;
 }
-GUI_FontInfoTypedef * GUI_get_font(uint32_t fontID) {
+MonoGUI_FontInfoTypedef * MonoGUI_get_font(uint32_t fontID) {
 	if (fontID < 0) {
 		fontID = 0;
-	} else if (fontID >= GUI_num_fonts) {
-		fontID = GUI_num_fonts - 1;
+	} else if (fontID >= MonoGUI_num_fonts) {
+		fontID = MonoGUI_num_fonts - 1;
 	}
-	return GUI_fonts[fontID];
+	return MonoGUI_fonts[fontID];
 }
-uint32_t GUI_get_string_width(char * str, uint32_t fontID) {
+uint32_t MonoGUI_get_string_width(char * str, uint32_t fontID) {
 	unsigned int map, allwidth = 0;
-	const GUI_FontInfoTypedef * font = GUI_get_font(fontID);
+	const MonoGUI_FontInfoTypedef * font = MonoGUI_get_font(fontID);
 	
 	while((map = *str++)) {
 		map -= font->start_char;
@@ -224,39 +224,39 @@ uint32_t GUI_get_string_width(char * str, uint32_t fontID) {
 	}
 	return allwidth;
 }
-uint32_t GUI_get_string_height(char * str, uint32_t fontID) {
-	return strlen(str) * GUI_get_font(fontID)->glyph_height;
+uint32_t MonoGUI_get_string_height(char * str, uint32_t fontID) {
+	return strlen(str) * MonoGUI_get_font(fontID)->glyph_height;
 }
-uint32_t GUI_write_string(uint32_t x, uint32_t y, char * str, uint32_t fontID, GUI_TextAlignTypedef align, GUI_TextDirectionTypedef dir, uint8_t color) {
-	if (dir == GUI_TEXT_DIRECTION_HORIZONTAL) {
+uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char * str, uint32_t fontID, MonoGUI_TextAlignTypedef align, MonoGUI_TextDirectionTypedef dir, uint8_t color) {
+	if (dir == MonoGUI_TEXT_DIRECTION_HORIZONTAL) {
 		switch (align) {
-			case GUI_TEXT_ALIGN_LEFT:
-			case GUI_TEXT_ALIGN_TOP:
-			case GUI_TEXT_ALIGN_BOTTOM:
+			case MonoGUI_TEXT_ALIGN_LEFT:
+			case MonoGUI_TEXT_ALIGN_TOP:
+			case MonoGUI_TEXT_ALIGN_BOTTOM:
 				break;
-			case GUI_TEXT_ALIGN_CENTER:
-				x -= GUI_get_string_width(str, fontID) / 2;
+			case MonoGUI_TEXT_ALIGN_CENTER:
+				x -= MonoGUI_get_string_width(str, fontID) / 2;
 				break;
-			case GUI_TEXT_ALIGN_RIGHT:
-				x -= GUI_get_string_width(str, fontID);
+			case MonoGUI_TEXT_ALIGN_RIGHT:
+				x -= MonoGUI_get_string_width(str, fontID);
 				break;
 		}
 	} else {
 		switch (align) {
-			case GUI_TEXT_ALIGN_TOP:
-			case GUI_TEXT_ALIGN_LEFT:
-			case GUI_TEXT_ALIGN_RIGHT:
+			case MonoGUI_TEXT_ALIGN_TOP:
+			case MonoGUI_TEXT_ALIGN_LEFT:
+			case MonoGUI_TEXT_ALIGN_RIGHT:
 				break;
-			case GUI_TEXT_ALIGN_CENTER:
-				y -= GUI_get_string_height(str, fontID) / 2;
+			case MonoGUI_TEXT_ALIGN_CENTER:
+				y -= MonoGUI_get_string_height(str, fontID) / 2;
 				break;
-			case GUI_TEXT_ALIGN_BOTTOM:
-				y -= GUI_get_string_height(str, fontID);
+			case MonoGUI_TEXT_ALIGN_BOTTOM:
+				y -= MonoGUI_get_string_height(str, fontID);
 				break;
 		}
 	}
 	
-	GUI_FontInfoTypedef * font = GUI_get_font(fontID);
+	MonoGUI_FontInfoTypedef * font = MonoGUI_get_font(fontID);
 	uint32_t offset;
 	uint32_t width, by = 0, mask = 0;
 	uint32_t NrBytes;
@@ -291,13 +291,13 @@ uint32_t GUI_write_string(uint32_t x, uint32_t y, char * str, uint32_t fontID, G
 	 			mask >>= 1;
 			}
 		}
-		if (dir == GUI_TEXT_DIRECTION_HORIZONTAL) {
+		if (dir == MonoGUI_TEXT_DIRECTION_HORIZONTAL) {
 			allwidth += width + 1; // TODO: (MISSING) text spacing
 		} else {
 			allheight += height + 1; // TODO: (MISSING) text spacing
 		}
 	}
-	return (dir == GUI_TEXT_DIRECTION_HORIZONTAL) ? allwidth : allheight;
+	return (dir == MonoGUI_TEXT_DIRECTION_HORIZONTAL) ? allwidth : allheight;
 }
 
 
