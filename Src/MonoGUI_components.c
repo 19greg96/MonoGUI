@@ -2,7 +2,6 @@
 #include <MonoGUI.h>
 #include <MonoGUI_components.h>
 #include <MonoGUI_font_legible3x5_6pt.h>
-#include "BSP_ADC.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -182,7 +181,7 @@ MonoGUI_Label* MonoGUI_label_create(char* text, uint32_t fontID) {
 	MonoGUI_Label* label = (MonoGUI_Label*)malloc(sizeof(MonoGUI_Label));
 	
 	if (strlen(text) >= MonoGUI_LABEL_MAX_LEN - 1) {
-		Error_Handler();
+		__asm__ __volatile__ ("bkpt #0");
 	}
 	strcpy(label->value, text);
 	label->formatter = formatSimpleText;
@@ -218,7 +217,7 @@ MonoGUI_ScrollButton* MonoGUI_scrollButton_create(char* text, uint32_t fontID, f
 	MonoGUI_ScrollButton* scrollButton = (MonoGUI_ScrollButton*)malloc(sizeof(MonoGUI_ScrollButton));
 	
 	if (strlen(text) >= MonoGUI_LABEL_MAX_LEN - 2) { // 1 char will be appended
-		Error_Handler();
+		__asm__ __volatile__ ("bkpt #0");
 	}
 	char tmp[MonoGUI_LABEL_MAX_LEN];
 	strcpy(tmp, text);
@@ -335,7 +334,7 @@ MonoGUI_ToggleButton* MonoGUI_toggleButton_create(char* defaultText, uint32_t fo
 	MonoGUI_ToggleButton* toggleButton = (MonoGUI_ToggleButton*)malloc(sizeof(MonoGUI_ToggleButton));
 	
 	if (strlen(defaultText) >= MonoGUI_LABEL_MAX_LEN - 1) {
-		Error_Handler();
+		__asm__ __volatile__ ("bkpt #0");
 	}
 	
 	toggleButton->button = MonoGUI_button_create(defaultText, fontID, onClick);
@@ -567,7 +566,7 @@ MonoGUI_MenuButton* MonoGUI_menuButton_create(char* defaultText, uint32_t fontID
 	MonoGUI_MenuButton* menuButton = (MonoGUI_MenuButton*)malloc(sizeof(MonoGUI_MenuButton));
 	
 	if (strlen(defaultText) >= MonoGUI_LABEL_MAX_LEN - 2) { // 1 char will be appended
-		Error_Handler();
+		__asm__ __volatile__ ("bkpt #0");
 	}
 	
 	char tmp[MonoGUI_LABEL_MAX_LEN];
@@ -1054,7 +1053,7 @@ MonoGUI_Screen* MonoGUI_screen_create() {
 		screen->id = MonoGUI_num_screens;
 		MonoGUI_num_screens++;
 	} else {
-		Error_Handler();
+		__asm__ __volatile__ ("bkpt #0");
 	}
 	
 	screen->numComponents = 0;

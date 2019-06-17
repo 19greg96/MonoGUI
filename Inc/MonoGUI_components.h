@@ -2,9 +2,10 @@
 #ifndef __MonoGUI_COMPONENTS_H
 #define __MonoGUI_COMPONENTS_H
 
+#include "stm32f4xx_hal.h"
+#include "arm_math.h"
 
 #include "MonoGUI_font.h"
-#include "BSP_GLCD.h"
 #include "MonoGFX.h"
 #include <stdint.h>
 

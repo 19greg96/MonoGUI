@@ -3,7 +3,6 @@
 
 #include "MonoGUI_font.h"
 #include "MonoGUI_components.h"
-#include "BSP_GLCD.h"
 #include <stdint.h>
 
 
