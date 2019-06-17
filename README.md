@@ -30,7 +30,7 @@ Uses ![MonoGFX](https://github.com/19greg96/MonoGFX) to draw components to a byt
 
 ## TODO
  - Remove use of `arm_math.h` (and thus `stm32f4xx_hal.h`) or move it behind preprocessor switch
- - More components
+ - More components (TextBox, ScrollBar, ProgressBar, Window, MenuBar, PieChart, BarGraph)
  - More properties to configure existing components
  - More format methods and better implementation
  - Documentation
