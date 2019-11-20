@@ -23,7 +23,15 @@ Uses ![MonoGFX](https://github.com/19greg96/MonoGFX) to draw components to a byt
  
        uint32_t defaultFont = MonoGUI_register_font(&MonoGUI_font_legible3x5_6ptFontInfo);
  - Create your components and add them to screens.
- - In your render loop: handle user input and call `void MonoGUI_scroll(int16_t delta, uint8_t largeStep);`, `void MonoGUI_tab(int16_t delta);`, `void MonoGUI_mainBtnClick();`, `void MonoGUI_set_screen(int32_t screen);`, `void MonoGUI_select_component(MonoGUI_Component* component);` and `void MonoGUI_click_component(MonoGUI_Component* component);` accordingly. This is where your callbacks will be **synchronously** called, so it is not advised to call these methods from interrupts.
+ - In your render loop: handle user input and call any of the following functions based on your input:
+   - `void MonoGUI_scroll(int16_t delta, uint8_t largeStep);`
+   - `void MonoGUI_tab(int16_t delta);`
+   - `void MonoGUI_mainBtnClick();`
+   - `void MonoGUI_set_screen(int32_t screen);`
+   - `void MonoGUI_select_component(MonoGUI_Component* component);`
+   - `void MonoGUI_click_component(MonoGUI_Component* component);`
+   
+   This is where your callbacks will be **synchronously** called, so it is not advised to call these methods from interrupts.
  - If you are using multiple `MonoGFX_BufferTypedef` objects, call `void MonoGFX_setActiveBuffer(MonoGFX_BufferTypedef* buff)` on the one you want to render to.
  - Call `void MonoGUI_render();`. This draws all the components in the current screen to the active MonoGFX buffer.
  - Currently, creating multiple instances of MonoGUI is not supported. To draw to multiple displays from a single controller, create separate screens and select the appropriate screen with `void MonoGUI_set_screen(int32_t screen);` before you call `void MonoGUI_render();`.
