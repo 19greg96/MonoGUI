@@ -17,7 +17,7 @@ Uses ![MonoGFX](https://github.com/19greg96/MonoGFX) to draw components to a byt
 ## Usage
 
  - Clone this repo, add `Inc/` to include directories and `Src/` to source directories.
- - Install ![MonoGFX](https://github.com/19greg96/MonoGFX) and create a `MonoGFX_BufferTypedef` object.
+ - Install ![MonoGFX](https://github.com/19greg96/MonoGFX) and create a `MonoGFX_DisplayTypedef` object.
  - Call `void MonoGUI_init();`
  - Create a default font:
  
@@ -32,7 +32,7 @@ Uses ![MonoGFX](https://github.com/19greg96/MonoGFX) to draw components to a byt
    - `void MonoGUI_click_component(MonoGUI_Component* component);`
    
    This is where your callbacks will be **synchronously** called, so it is not advised to call these methods from interrupts.
- - If you are using multiple `MonoGFX_BufferTypedef` objects, call `void MonoGFX_setActiveBuffer(MonoGFX_BufferTypedef* buff)` on the one you want to render to.
+ - If you are using multiple `MonoGFX_DisplayTypedef` objects, call `void MonoGFX_set_active_display(MonoGFX_DisplayTypedef* disp)` on the one you want to render to.
  - Call `void MonoGUI_render();`. This draws all the components in the current screen to the active MonoGFX buffer.
  - Currently, creating multiple instances of MonoGUI is not supported. To draw to multiple displays from a single controller, create separate screens and select the appropriate screen with `void MonoGUI_set_screen(int32_t screen);` before you call `void MonoGUI_render();`.
 
