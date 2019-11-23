@@ -5,7 +5,9 @@
 #include "MonoGUI_components.h"
 #include <stdint.h>
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 uint32_t MonoGUI_idCounter;
 #define MonoGUI_MAX_NUM_SCREENS		5
@@ -34,5 +36,9 @@ MonoGUI_FontInfoTypedef * MonoGUI_get_font(uint32_t fontID);
 uint32_t MonoGUI_get_string_width(char * str, uint32_t fontID);
 uint32_t MonoGUI_get_string_height(char * str, uint32_t fontID);
 uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char * str, uint32_t fontID, MonoGUI_TextAlignTypedef align, MonoGUI_TextDirectionTypedef dir, uint8_t color);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
