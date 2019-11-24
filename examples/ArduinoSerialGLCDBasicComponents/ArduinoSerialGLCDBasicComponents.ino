@@ -51,16 +51,18 @@ MonoGFX_DisplayTypedef MonoGFXDisplay;
 KS0107Serial serialDisplay(8); // SPI_latchPin
 
 void onBtn(void* caller) {
+	(void)(caller); // UNUSED
 	// (MonoGUI_Button*)caller
 }
 
 void setup() {
 	MonoGUI_init();
+	
 	uint32_t defaultFont = MonoGUI_register_font(&MonoGUI_font_legible3x5_6ptFontInfo);
 	
 	MonoGUI_Screen* mainScreen = MonoGUI_screen_create();
 	
-	MonoGUI_Component* btn = MonoGUI_component_create(MonoGUI_COMPONENT_BUTTON, 5, 5, MonoGUI_button_create("Button", defaultFont, onBtn));
+	MonoGUI_Component* btn = MonoGUI_component_create(MonoGUI_COMPONENT_BUTTON, 5, 5, MonoGUI_button_create((char*)"Button", defaultFont, onBtn));
 	
 	MonoGUI_screen_add_component(mainScreen, btn);
 	
@@ -70,7 +72,25 @@ void setup() {
 	MonoGFX_init(&MonoGFXDisplay);
 }
 
+int8_t s = 0;
+int8_t dir = 1;
 void loop() {
+	s += dir;
+	MonoGFX_clear();
+	MonoGFX_draw_circle(64, 32, s, MonoGFX_COLOR_ON);
+	
+	MonoGFX_draw_triangle(64, 32, 64, 32 - s, 64 - s, 32, MonoGFX_COLOR_ON);
+	
+	MonoGFX_draw_rect(0, 0, 32 - s, 32 - s, MonoGFX_COLOR_ON);
+	MonoGFX_fill_rect(128 - s, 0, 128, s, MonoGFX_COLOR_ON);
+	
+	MonoGFX_draw_round_rect(0, 32, 32, 64, s, MonoGFX_COLOR_ON);
+	MonoGFX_fill_round_rect(96 + s, 32 + s, 32 - s, 32 - s, s, MonoGFX_COLOR_ON);
+	
+	if (s == 32 || s == 0) {
+		dir *= -1;
+	}
+	
 	MonoGUI_render();
 	serialDisplay.update(MonoGFXDisplay.buffer);
 }

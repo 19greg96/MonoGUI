@@ -17,7 +17,7 @@ int32_t MonoGUI_curr_screen;
 MonoGUI_Component* MonoGUI_selected_component;
 
 #define MonoGUI_MAX_FONTS	2
-MonoGUI_FontInfoTypedef * MonoGUI_fonts[MonoGUI_MAX_FONTS];
+MonoGUI_FontInfoTypedef* MonoGUI_fonts[MonoGUI_MAX_FONTS];
 uint32_t MonoGUI_num_fonts;
 
 void MonoGUI_init();

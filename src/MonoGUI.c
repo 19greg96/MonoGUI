@@ -6,6 +6,7 @@
 
 void MonoGUI_init() {
 	MonoGUI_idCounter = 0;
+	MonoGUI_num_fonts = 0;
 	MonoGUI_num_screens = 0;
 	MonoGUI_curr_screen = -1;
 	
@@ -49,7 +50,7 @@ void MonoGUI_close_all_menus() {
 	}
 }
 void MonoGUI_set_screen(int32_t screen) {
-	if (screen > MonoGUI_num_screens) {
+	if ((uint32_t)screen > MonoGUI_num_screens) {
 		return;
 	}
 	MonoGUI_close_all_menus();
@@ -197,37 +198,37 @@ void MonoGUI_mainBtnClick() { // called externally
 }
 
 
-uint32_t MonoGUI_register_font(MonoGUI_FontInfoTypedef * font) {
+// string handling
+uint32_t MonoGUI_register_font(MonoGUI_FontInfoTypedef* font) {
 	MonoGUI_fonts[MonoGUI_num_fonts] = font;
 	
 	MonoGUI_num_fonts ++;
 	return MonoGUI_num_fonts - 1;
 }
 MonoGUI_FontInfoTypedef * MonoGUI_get_font(uint32_t fontID) {
-	if (fontID < 0) {
-		fontID = 0;
-	} else if (fontID >= MonoGUI_num_fonts) {
-		fontID = MonoGUI_num_fonts - 1;
+	if (fontID > MonoGUI_num_fonts) {
+		return NULL;
 	}
 	return MonoGUI_fonts[fontID];
 }
-uint32_t MonoGUI_get_string_width(char * str, uint32_t fontID) {
-	unsigned int map, allwidth = 0;
-	const MonoGUI_FontInfoTypedef * font = MonoGUI_get_font(fontID);
+uint32_t MonoGUI_get_string_width(char* str, uint32_t fontID) {
+	uint32_t map;
+	uint32_t allwidth = 0;
+	const MonoGUI_FontInfoTypedef* font = MonoGUI_get_font(fontID);
 	
 	while((map = *str++)) {
 		map -= font->start_char;
-		if (map < 0 || map > font->end_char) {
-			continue;
+		if (map > font->end_char) { // map < 0 || 
+			continue; // character not in table
 		}
 		allwidth += font->mapping_table[map].widthBits + 1;
 	}
 	return allwidth;
 }
-uint32_t MonoGUI_get_string_height(char * str, uint32_t fontID) {
+uint32_t MonoGUI_get_string_height(char* str, uint32_t fontID) {
 	return strlen(str) * MonoGUI_get_font(fontID)->glyph_height;
 }
-uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char * str, uint32_t fontID, MonoGUI_TextAlignTypedef align, MonoGUI_TextDirectionTypedef dir, uint8_t color) {
+uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char* str, uint32_t fontID, MonoGUI_TextAlignTypedef align, MonoGUI_TextDirectionTypedef dir, uint8_t color) {
 	if (dir == MonoGUI_TEXT_DIRECTION_HORIZONTAL) {
 		switch (align) {
 			case MonoGUI_TEXT_ALIGN_LEFT:
@@ -261,12 +262,12 @@ uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char * str, uint32_t fontI
 	uint32_t width, by = 0, mask = 0;
 	uint32_t NrBytes;
 	uint32_t i, j, height, allheight = 0, allwidth = 0;
-	int8_t map;
+	uint32_t map;
 	
 	while((map = *str++)) {
 		map -= font->start_char;
-		if (map < 0 || map > font->end_char) {
-			continue;
+		if (map > font->end_char) { // map < 0 || 
+			continue; // character not in table
 		}
 		
 		width = font->mapping_table[map].widthBits;
@@ -278,7 +279,7 @@ uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char * str, uint32_t fontI
 		for (j = 0; j < height * NrBytes; j += NrBytes) {
 			for (i = 0; i < width; i++) {
 				if (i % 8 == 0) {
-					by = font->glyph_table[offset + j + (i / 8)];
+					by = READ_BYTE_FROM_PROGMEM(font->glyph_table[offset + j + (i / 8)]);
 					mask = 0x80;
 				}
 				

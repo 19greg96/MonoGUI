@@ -2,12 +2,23 @@
 #ifndef __MonoGUI_COMPONENTS_H
 #define __MonoGUI_COMPONENTS_H
 
-#include "stm32f4xx_hal.h"
-#include "arm_math.h"
+#ifdef MONO_GUI_STM32
+	#include "stm32f4xx_hal.h"
+	#include "arm_math.h"
+	
+	#define getTick		HAL_GetTick
+#else // arduino
+	#include <Arduino.h>
+	#define getTick		millis
+#endif
 
 #include "MonoGUI_font.h"
 #include "MonoGFX.h"
 #include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef void (*MonoGUI_CallbackTypedef)(void* caller);
 typedef void (*MonoGUI_StringFormatterTypedef)(char* out, void* param);
@@ -208,7 +219,9 @@ typedef struct MonoGUI_Graph {
 	MonoGUI_GraphLabel* vOffset2GraphLabel;
 	MonoGUI_GraphLabel* hOffsetGraphLabel;
 	
+#ifdef MONO_GUI_STM32
 	arm_rfft_fast_instance_f32 FFTStruct;
+#endif
 	MonoGUI_GraphModeTypedef mode;
 	float Fs_Hz; // sampling frequency
 	float* data_1; // [V] buffer center is expected to be at dataBufferSize/2
@@ -243,7 +256,9 @@ void MonoGUI_sprite_render(MonoGUI_Sprite* sprite, int32_t x, int32_t y);
 
 
 
-
+#ifdef __cplusplus
+}
+#endif
 
 
 

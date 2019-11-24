@@ -3,14 +3,52 @@
 #include <MonoGUI_components.h>
 #include <MonoGUI_font_legible3x5_6pt.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #define MonoGUI_ROW_WIDTH		32
 #define MonoGUI_ROW_HEIGHT		8
 #define MonoGUI_LEFT_PADDING	0
 
+uint8_t ftoa(char* buff, float f, uint8_t precision) {
+	// returns string length written to buffer
+	uint8_t correctionFactor = 0;
+	if ((int32_t)f == 0) {
+		// this is a hacky fix for cases where
+		// f = 0.01, precision = 4
+		correctionFactor = 1;
+		f += 1;
+	}
+	int32_t integer = (int32_t)(f * pow(10, precision)); // 100
+	if (integer == 0) {
+		buff[0] = '0';
+		buff[1] = 0;
+		return 1;
+	}
+	uint8_t decimalPointExists = (precision != 0 ? 1 : 0);
+	uint8_t n = log10(integer) + decimalPointExists; // 3
+	uint8_t j = 0;
+	for (uint8_t i = 0; i <= n; i ++) {
+		if (i == precision && decimalPointExists) {
+			buff[n-j] = '.';
+			j++;
+		}
+		char c = (uint8_t)(integer % 10) + '0';
+		integer /= 10;
+		buff[n - j] = c;
+		j++;
+	}
+	buff[0] -= correctionFactor;
+	buff[n + 1] = 0;
+	return n;
+}
+
 void formatPercentage(char* out, void* param) {
-	sprintf(out, "%0.1f%%", *((float*)param));
+	// sprintf(out, "%0.1f%%", *((float*)param));
+	uint8_t len = ftoa(out, *((float*)param), 1);
+	out[len] = '%';
+	out[len + 1] = 0;
 }
 void formatVoltage(char* out, void* param) {
 	float voltage = *((float*)param);
@@ -18,46 +56,60 @@ void formatVoltage(char* out, void* param) {
 		sprintf(out, "%dmV", (int)(voltage * 1000.0f));
 		return;
 	} else if (voltage < 10.0f) {
-		sprintf(out, "%.2fV", voltage);
+		// sprintf(out, "%.2fV", voltage);
+		uint8_t len = ftoa(out, voltage, 2);
+		out[len] = 'V';
+		out[len + 1] = 0;
 		return;
 	}
 	sprintf(out, "%dV", (int)voltage);
 }
 void formatFrequency(char* out, void* param) {
 	float frequency_Hz = *((float*)param);
-	if (frequency_Hz < 10.0f) {
-		sprintf(out, "%0.1fHz", frequency_Hz);
-	} else if (frequency_Hz < 100.0f) {
-		sprintf(out, "%0.1fHz", frequency_Hz);
-	} else if (frequency_Hz < 1000.0f) {
-		sprintf(out, "%0.1fHz", frequency_Hz);
-	} else if (frequency_Hz < 10000.0f) {
-		sprintf(out, "%0.1fkHz", frequency_Hz / 1000.0f); // kHz
-	} else if (frequency_Hz < 100000.0f) {
-		sprintf(out, "%0.1fkHz", frequency_Hz / 1000.0f);
+	if (frequency_Hz < 1000.0f) {
+		// sprintf(out, "%0.1fHz", frequency_Hz);
+		uint8_t len = ftoa(out, frequency_Hz, 1);
+		out[len] = 'H';
+		out[len + 1] = 'z';
+		out[len + 2] = 0;
 	} else if (frequency_Hz < 1000000.0f) {
-		sprintf(out, "%0.1fkHz", frequency_Hz / 1000.0f);
+		// sprintf(out, "%0.1fkHz", frequency_Hz / 1000.0f);
+		uint8_t len = ftoa(out, frequency_Hz / 1000.0f, 1);
+		out[len] = 'k';
+		out[len + 1] = 'H';
+		out[len + 2] = 'z';
+		out[len + 3] = 0;
 	} else {
-		sprintf(out, "%0.1fMHz", frequency_Hz / 1000000.0f); // MHz
+		// sprintf(out, "%0.1fMHz", frequency_Hz / 1000000.0f); // MHz
+		uint8_t len = ftoa(out, frequency_Hz / 1000000.0f, 1);
+		out[len] = 'M';
+		out[len + 1] = 'H';
+		out[len + 2] = 'z';
+		out[len + 3] = 0;
 	}
 }
 void formatTime(char* out, void* param) {
 	float time_s = *((float*)param);
 	if (time_s < 0.000001f) { // ns
-		sprintf(out, "%0.0fns", time_s * 1000000000.0f);
+		sprintf(out, "%dns", (int)(time_s * 1000000000.0f));
 	} else if (time_s < 0.001f) { // us
-		sprintf(out, "%0.0fus", time_s * 1000000.0f);
+		sprintf(out, "%dus", (int)(time_s * 1000000.0f));
 	} else if (time_s < 0.1f) { // ms
-		sprintf(out, "%0.0fms", time_s * 1000.0f);
+		sprintf(out, "%dms", (int)(time_s * 1000.0f));
 	} else {
-		sprintf(out, "%0.2fs", time_s);
+		// sprintf(out, "%0.2fs", time_s);
+		uint8_t len = ftoa(out, time_s, 2);
+		out[len] = 's';
+		out[len + 1] = 0;
 	}
 }
 void formatSimpleText(char* out, void* param) {
 	sprintf(out, "%s", (char*)param);
 }
 void formatEmpty(char* out, void* param) {
-	strcpy(out, "");
+	(void)(param); // UNUSED
+	// strcpy(out, "");
+	out[0] = 0;
 }
 
 void MonoGUI_drawPanelTriangle(int32_t x, int32_t y, uint8_t triangleFill) {
@@ -243,7 +295,7 @@ void MonoGUI_scrollButton_render(MonoGUI_ScrollButton* scrollButton, int32_t x, 
 	}
 	MonoGUI_button_render(scrollButton->button, x, y);
 	
-	if (scrollButton->panelEnabled && (HAL_GetTick() - scrollButton->lastScrollTime) < MonoGUI_SCROLL_BUTTON_PANEL_SHOW_TIMEOUT && scrollButton->lastScrollTime) {
+	if (scrollButton->panelEnabled && (getTick() - scrollButton->lastScrollTime) < MonoGUI_SCROLL_BUTTON_PANEL_SHOW_TIMEOUT && scrollButton->lastScrollTime) {
 		MonoGFX_fill_round_rect(x - 2, y - 11, MonoGUI_ROW_WIDTH + 1, 7, 1, MonoGFX_COLOR_OFF);
 		MonoGFX_draw_round_rect(x - 2, y - 11, MonoGUI_ROW_WIDTH + 1, 7, 1, MonoGFX_COLOR_ON);
 		MonoGUI_drawPanelTriangle(x, y, MonoGFX_COLOR_OFF);
@@ -266,7 +318,7 @@ void MonoGUI_scrollButton_clamp_value(MonoGUI_ScrollButton* scrollButton) {
 	}
 }
 void MonoGUI_scrollButton_scroll(MonoGUI_ScrollButton* scrollButton, int16_t delta, uint8_t largeStep) {
-	scrollButton->lastScrollTime = HAL_GetTick();
+	scrollButton->lastScrollTime = getTick();
 	scrollButton->value += (largeStep ? scrollButton->largeStep : scrollButton->smallStep) * delta;
 	MonoGUI_scrollButton_clamp_value(scrollButton);
 	
@@ -900,6 +952,7 @@ void MonoGUI_graph_render(MonoGUI_Graph* graph, int32_t x, int32_t y) {
 			} break;
 			case MonoGUI_GRAPH_MODE_1CH_FFT:
 			case MonoGUI_GRAPH_MODE_2CH_FFT: {
+#ifdef MONO_GUI_STM32
 				// TODO: FFT goes wild when no trigger is occuring (because we write to other channels buffer, and it's not updated from last time)
 				// TODO: windowing function before FFT
 				float* inputBuffer;
@@ -964,6 +1017,7 @@ for (n = 0; n < numSamples; n++) {
 					
 					MonoGFX_draw_line(currX, y + graph->h, currX, y + graph->h - currVal, MonoGFX_COLOR_ON);
 				}
+#endif
 			} break;
 			case MonoGUI_GRAPH_MODE_AMPLITUDE: {
 				// TODO: bode graph
@@ -1070,6 +1124,8 @@ int32_t MonoGUI_screen_add_component(MonoGUI_Screen* screen, MonoGUI_Component* 
 	return -1;
 }
 void MonoGUI_screen_render(MonoGUI_Screen* screen, int32_t x, int32_t y) {
+	(void)(x); // UNUSED
+	(void)(y); // UNUSED
 	for (uint32_t i = 0; i < screen->numComponents; i ++) {
 		MonoGUI_component_render(screen->components[i]);
 	}

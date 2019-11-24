@@ -6,7 +6,7 @@
 #include <MonoGUI_font_legible3x5_6pt.h>
 
 // Character bitmaps for Legible 3x5 6pt
-const unsigned char MonoGUI_font_legible3x5_6ptBitmaps[] = 
+const PROGMEM unsigned char MonoGUI_font_legible3x5_6ptBitmaps[] = 
 {
 	// @0 ' ' (2 pixels wide)
 	0b00000000, //   

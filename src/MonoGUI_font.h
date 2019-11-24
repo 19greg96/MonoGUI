@@ -1,6 +1,14 @@
 #ifndef __MonoGUI_FONT__
 #define __MonoGUI_FONT__
 
+#ifdef MONO_GUI_STM32
+	#define PROGMEM
+	#define READ_BYTE_FROM_PROGMEM(x)	(x)
+#else // arduino
+	#include <avr/pgmspace.h>
+	#define READ_BYTE_FROM_PROGMEM(x)	pgm_read_byte(&x)
+#endif
+
 typedef struct MonoGUI_FontCharInfoTypedef {
     const unsigned char widthBits; // width, in bits (or pixels), of the character
     const unsigned int offset;
