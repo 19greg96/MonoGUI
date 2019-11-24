@@ -37,7 +37,6 @@ Uses ![MonoGFX](https://github.com/19greg96/MonoGFX) to draw components to a byt
  - Currently, creating multiple instances of MonoGUI is not supported. To draw to multiple displays from a single controller, create separate screens and select the appropriate screen with `void MonoGUI_set_screen(int32_t screen);` before you call `void MonoGUI_render();`.
 
 ## TODO
- - Remove use of `arm_math.h` (and thus `stm32f4xx_hal.h`) or move it behind preprocessor switch
  - More components (TextBox, ScrollBar, ProgressBar, Window, MenuBar, PieChart, BarGraph)
  - More properties to configure existing components
  - More format methods and better implementation
