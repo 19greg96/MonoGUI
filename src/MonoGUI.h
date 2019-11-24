@@ -31,6 +31,8 @@ void MonoGUI_scroll(int16_t delta, uint8_t largeStep);
 void MonoGUI_mainBtnClick();
 void MonoGUI_set_screen(int32_t screen);
 
+#define MonoGUI_TEXT_SPACING	1
+
 uint32_t MonoGUI_register_font(MonoGUI_FontInfoTypedef * font);
 MonoGUI_FontInfoTypedef * MonoGUI_get_font(uint32_t fontID);
 uint32_t MonoGUI_get_string_width(char * str, uint32_t fontID);

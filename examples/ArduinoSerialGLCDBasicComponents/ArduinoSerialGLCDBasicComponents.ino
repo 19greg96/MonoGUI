@@ -50,9 +50,19 @@ MonoGFX_DisplayTypedef MonoGFXDisplay;
 
 KS0107Serial serialDisplay(8); // SPI_latchPin
 
+int8_t circleSize = 2;
+
 void onBtn(void* caller) {
 	(void)(caller); // UNUSED
 	// (MonoGUI_Button*)caller
+	
+	circleSize++;
+}
+void drawSprite(MonoGUI_Sprite* sprite, int32_t x, int32_t y) {
+	MonoGFX_draw_circle(x, y, circleSize, MonoGFX_COLOR_ON);
+}
+void onSizeScroll(void* caller) {
+	circleSize = ((MonoGUI_Range*)caller)->scrollButton->value;
 }
 
 void setup() {
@@ -63,8 +73,20 @@ void setup() {
 	MonoGUI_Screen* mainScreen = MonoGUI_screen_create();
 	
 	MonoGUI_Component* btn = MonoGUI_component_create(MonoGUI_COMPONENT_BUTTON, 5, 5, MonoGUI_button_create((char*)"Button", defaultFont, onBtn));
-	
 	MonoGUI_screen_add_component(mainScreen, btn);
+	
+	MonoGUI_Sprite* spr = MonoGUI_sprite_create(drawSprite);
+	MonoGUI_Component* sprComponent = MonoGUI_component_create(MonoGUI_COMPONENT_SPRITE, 100, 32, spr);
+	MonoGUI_screen_add_component(mainScreen, sprComponent);
+	
+	MonoGUI_Range* sizeRange = MonoGUI_range_create("Size", defaultFont, 0.0f, 30.0f, circleSize, onSizeScroll, 20, formatInt);
+	sizeRange->scrollButton->smallStep = 1.0f;
+	sizeRange->scrollButton->largeStep = 2.0f;
+	sizeRange->valueLabel->align = MonoGUI_TEXT_ALIGN_RIGHT;
+	MonoGUI_Component* sizeRangeComponent = MonoGUI_component_create(MonoGUI_COMPONENT_RANGE, 5, 20, sizeRange);
+	MonoGUI_screen_add_component(mainScreen, sizeRangeComponent);
+	
+	
 	
 	MonoGFXDisplay.width = 128;
 	MonoGFXDisplay.height = 64;
@@ -72,25 +94,7 @@ void setup() {
 	MonoGFX_init(&MonoGFXDisplay);
 }
 
-int8_t s = 0;
-int8_t dir = 1;
 void loop() {
-	s += dir;
-	MonoGFX_clear();
-	MonoGFX_draw_circle(64, 32, s, MonoGFX_COLOR_ON);
-	
-	MonoGFX_draw_triangle(64, 32, 64, 32 - s, 64 - s, 32, MonoGFX_COLOR_ON);
-	
-	MonoGFX_draw_rect(0, 0, 32 - s, 32 - s, MonoGFX_COLOR_ON);
-	MonoGFX_fill_rect(128 - s, 0, 128, s, MonoGFX_COLOR_ON);
-	
-	MonoGFX_draw_round_rect(0, 32, 32, 64, s, MonoGFX_COLOR_ON);
-	MonoGFX_fill_round_rect(96 + s, 32 + s, 32 - s, 32 - s, s, MonoGFX_COLOR_ON);
-	
-	if (s == 32 || s == 0) {
-		dir *= -1;
-	}
-	
 	MonoGUI_render();
 	serialDisplay.update(MonoGFXDisplay.buffer);
 }

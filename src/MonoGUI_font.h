@@ -5,13 +5,15 @@
 
 #ifdef MONO_GUI_STM32
 	#define PROGMEM
-	#define MONO_GUI_READ_BYTE_FROM_PROGMEM(x)	(x)
+	#define MONO_GUI_READ_BYTE_FROM_PROGMEM(x)		(x)
+	#define MONO_GUI_GET_CHARACTER_WIDTH(f, chr)	(f->mapping_table[chr].widthBits)
+	#define MONO_GUI_GET_CHARACTER_OFFSET(f, chr)	(f->mapping_table[chr].offset)
 #else // arduino
 	#include <avr/pgmspace.h>
-	#define MONO_GUI_READ_BYTE_FROM_PROGMEM(x)	pgm_read_byte(&x)
+	#define MONO_GUI_READ_BYTE_FROM_PROGMEM(x)	pgm_read_byte(&(x))
+	#define MONO_GUI_GET_CHARACTER_WIDTH(f, chr)	MONO_GUI_READ_BYTE_FROM_PROGMEM(f->mapping_table[chr].widthBits)
+	#define MONO_GUI_GET_CHARACTER_OFFSET(f, chr)	pgm_read_word(&(f->mapping_table[chr].offset))
 #endif
-#define MONO_GUI_GET_CHARACTER_WIDTH(f, chr)	MONO_GUI_READ_BYTE_FROM_PROGMEM(f->mapping_table[chr].widthBits)
-#define MONO_GUI_GET_CHARACTER_OFFSET(f, chr)	MONO_GUI_READ_BYTE_FROM_PROGMEM(f->mapping_table[chr].offset)
 
 typedef struct MonoGUI_FontCharInfoTypedef {
     const uint8_t widthBits; // width, in bits (or pixels), of the character
@@ -27,7 +29,6 @@ typedef struct MonoGUI_FontInfoTypedef {
 } MonoGUI_FontInfoTypedef;
 
 
-         
 #endif
                                   
 

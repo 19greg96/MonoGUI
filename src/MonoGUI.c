@@ -221,8 +221,9 @@ uint32_t MonoGUI_get_string_width(char* str, uint32_t fontID) {
 		if (map > font->end_char) { // map < 0 || 
 			continue; // character not in table
 		}
-		allwidth += MONO_GUI_GET_CHARACTER_WIDTH(font, map) + 1;
+		allwidth += MONO_GUI_GET_CHARACTER_WIDTH(font, map) + MonoGUI_TEXT_SPACING;
 	}
+	
 	return allwidth;
 }
 uint32_t MonoGUI_get_string_height(char* str, uint32_t fontID) {
@@ -285,7 +286,7 @@ uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char* str, uint32_t fontID
 				
 				if (by & mask) {
 					MonoGFX_set_pixel(x + i + allwidth, y + j / NrBytes + allheight, color);
-				} else if (color != 2) {
+				} else if (color != MonoGFX_COLOR_INVERT) {
 					MonoGFX_set_pixel(x + i + allwidth, y + j / NrBytes + allheight, !color);
 				}
 				
@@ -293,9 +294,9 @@ uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char* str, uint32_t fontID
 			}
 		}
 		if (dir == MonoGUI_TEXT_DIRECTION_HORIZONTAL) {
-			allwidth += width + 1; // TODO: (MISSING) text spacing
+			allwidth += width + MonoGUI_TEXT_SPACING;
 		} else {
-			allheight += height + 1; // TODO: (MISSING) text spacing
+			allheight += height + MonoGUI_TEXT_SPACING;
 		}
 	}
 	return (dir == MonoGUI_TEXT_DIRECTION_HORIZONTAL) ? allwidth : allheight;

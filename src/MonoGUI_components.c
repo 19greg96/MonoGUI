@@ -103,6 +103,14 @@ void formatTime(char* out, void* param) {
 		out[len + 1] = 0;
 	}
 }
+void formatInt(char* out, void* param) {
+	sprintf(out, "%d", (int)(*((float*)param)));
+}
+void formatFloat(char* out, void* param) {
+	// sprintf(out, "%0.1f%%", *((float*)param));
+	uint8_t len = ftoa(out, *((float*)param), 1);
+	out[len] = 0;
+}
 void formatSimpleText(char* out, void* param) {
 	sprintf(out, "%s", (char*)param);
 }
@@ -233,7 +241,7 @@ MonoGUI_Label* MonoGUI_label_create(char* text, uint32_t fontID) {
 	MonoGUI_Label* label = (MonoGUI_Label*)malloc(sizeof(MonoGUI_Label));
 	
 	if (strlen(text) >= MonoGUI_LABEL_MAX_LEN - 1) {
-		__asm__ __volatile__ ("bkpt #0");
+		MONO_GUI_bkpt;
 	}
 	strcpy(label->value, text);
 	label->formatter = formatSimpleText;
@@ -269,7 +277,7 @@ MonoGUI_ScrollButton* MonoGUI_scrollButton_create(char* text, uint32_t fontID, f
 	MonoGUI_ScrollButton* scrollButton = (MonoGUI_ScrollButton*)malloc(sizeof(MonoGUI_ScrollButton));
 	
 	if (strlen(text) >= MonoGUI_LABEL_MAX_LEN - 2) { // 1 char will be appended
-		__asm__ __volatile__ ("bkpt #0");
+		MONO_GUI_bkpt;
 	}
 	char tmp[MonoGUI_LABEL_MAX_LEN];
 	strcpy(tmp, text);
@@ -295,7 +303,7 @@ void MonoGUI_scrollButton_render(MonoGUI_ScrollButton* scrollButton, int32_t x, 
 	}
 	MonoGUI_button_render(scrollButton->button, x, y);
 	
-	if (scrollButton->panelEnabled && (getTick() - scrollButton->lastScrollTime) < MonoGUI_SCROLL_BUTTON_PANEL_SHOW_TIMEOUT && scrollButton->lastScrollTime) {
+	if (scrollButton->panelEnabled && (MONO_GUI_getTick() - scrollButton->lastScrollTime) < MonoGUI_SCROLL_BUTTON_PANEL_SHOW_TIMEOUT && scrollButton->lastScrollTime) {
 		MonoGFX_fill_round_rect(x - 2, y - 11, MonoGUI_ROW_WIDTH + 1, 7, 1, MonoGFX_COLOR_OFF);
 		MonoGFX_draw_round_rect(x - 2, y - 11, MonoGUI_ROW_WIDTH + 1, 7, 1, MonoGFX_COLOR_ON);
 		MonoGUI_drawPanelTriangle(x, y, MonoGFX_COLOR_OFF);
@@ -318,7 +326,7 @@ void MonoGUI_scrollButton_clamp_value(MonoGUI_ScrollButton* scrollButton) {
 	}
 }
 void MonoGUI_scrollButton_scroll(MonoGUI_ScrollButton* scrollButton, int16_t delta, uint8_t largeStep) {
-	scrollButton->lastScrollTime = getTick();
+	scrollButton->lastScrollTime = MONO_GUI_getTick();
 	scrollButton->value += (largeStep ? scrollButton->largeStep : scrollButton->smallStep) * delta;
 	MonoGUI_scrollButton_clamp_value(scrollButton);
 	
@@ -386,7 +394,7 @@ MonoGUI_ToggleButton* MonoGUI_toggleButton_create(char* defaultText, uint32_t fo
 	MonoGUI_ToggleButton* toggleButton = (MonoGUI_ToggleButton*)malloc(sizeof(MonoGUI_ToggleButton));
 	
 	if (strlen(defaultText) >= MonoGUI_LABEL_MAX_LEN - 1) {
-		__asm__ __volatile__ ("bkpt #0");
+		MONO_GUI_bkpt;
 	}
 	
 	toggleButton->button = MonoGUI_button_create(defaultText, fontID, onClick);
@@ -618,7 +626,7 @@ MonoGUI_MenuButton* MonoGUI_menuButton_create(char* defaultText, uint32_t fontID
 	MonoGUI_MenuButton* menuButton = (MonoGUI_MenuButton*)malloc(sizeof(MonoGUI_MenuButton));
 	
 	if (strlen(defaultText) >= MonoGUI_LABEL_MAX_LEN - 2) { // 1 char will be appended
-		__asm__ __volatile__ ("bkpt #0");
+		MONO_GUI_bkpt;
 	}
 	
 	char tmp[MonoGUI_LABEL_MAX_LEN];
@@ -1107,7 +1115,7 @@ MonoGUI_Screen* MonoGUI_screen_create() {
 		screen->id = MonoGUI_num_screens;
 		MonoGUI_num_screens++;
 	} else {
-		__asm__ __volatile__ ("bkpt #0");
+		MONO_GUI_bkpt;
 	}
 	
 	screen->numComponents = 0;

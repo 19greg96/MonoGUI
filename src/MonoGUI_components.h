@@ -6,10 +6,12 @@
 	#include "stm32f4xx_hal.h"
 	#include "arm_math.h"
 	
-	#define getTick		HAL_GetTick
+	#define MONO_GUI_getTick	HAL_GetTick
+	#define MONO_GUI_bkpt		__asm__ __volatile__ ("bkpt #0")
 #else // arduino
 	#include <Arduino.h>
-	#define getTick		millis
+	#define MONO_GUI_getTick	millis
+	#define MONO_GUI_bkpt		while(1)
 #endif
 
 #include "MonoGUI_font.h"
@@ -28,6 +30,8 @@ void formatVoltage(char* out, void* param);
 void formatFrequency(char* out, void* param);
 void formatTime(char* out, void* param);
 void formatSimpleText(char* out, void* param);
+void formatInt(char* out, void* param);
+void formatFloat(char* out, void* param);
 void formatEmpty(char* out, void* param);
 
 typedef enum {
