@@ -221,7 +221,7 @@ uint32_t MonoGUI_get_string_width(char* str, uint32_t fontID) {
 		if (map > font->end_char) { // map < 0 || 
 			continue; // character not in table
 		}
-		allwidth += font->mapping_table[map].widthBits + 1;
+		allwidth += MONO_GUI_GET_CHARACTER_WIDTH(font, map) + 1;
 	}
 	return allwidth;
 }
@@ -270,8 +270,8 @@ uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char* str, uint32_t fontID
 			continue; // character not in table
 		}
 		
-		width = font->mapping_table[map].widthBits;
-		offset = font->mapping_table[map].offset;
+		width = MONO_GUI_GET_CHARACTER_WIDTH(font, map);
+		offset = MONO_GUI_GET_CHARACTER_OFFSET(font, map);
 		height = font->glyph_height;
 
 		NrBytes = ((width - 1) / 8) + 1;
@@ -279,7 +279,7 @@ uint32_t MonoGUI_write_string(uint32_t x, uint32_t y, char* str, uint32_t fontID
 		for (j = 0; j < height * NrBytes; j += NrBytes) {
 			for (i = 0; i < width; i++) {
 				if (i % 8 == 0) {
-					by = READ_BYTE_FROM_PROGMEM(font->glyph_table[offset + j + (i / 8)]);
+					by = MONO_GUI_READ_BYTE_FROM_PROGMEM(font->glyph_table[offset + j + (i / 8)]);
 					mask = 0x80;
 				}
 				

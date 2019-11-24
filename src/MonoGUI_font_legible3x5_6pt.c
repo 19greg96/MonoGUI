@@ -773,7 +773,7 @@ const PROGMEM unsigned char MonoGUI_font_legible3x5_6ptBitmaps[] =
 
 // Character descriptors for Legible 3x5 6pt
 // { [Char width in bits], [Offset into legible3x5_6ptCharBitmaps in bytes] }
-const MonoGUI_FontCharInfoTypedef MonoGUI_font_legible3x5_6ptDescriptors[] = 
+const PROGMEM MonoGUI_FontCharInfoTypedef MonoGUI_font_legible3x5_6ptDescriptors[] = 
 {
 	{2, 0}, 		//   
 	{1, 6}, 		// ! 

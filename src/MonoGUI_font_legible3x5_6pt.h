@@ -3,7 +3,7 @@
 // Font data for Legible 3x5 6pt
 extern const PROGMEM unsigned char MonoGUI_font_legible3x5_6ptBitmaps[];
 extern MonoGUI_FontInfoTypedef MonoGUI_font_legible3x5_6ptFontInfo;
-extern const MonoGUI_FontCharInfoTypedef MonoGUI_font_legible3x5_6ptDescriptors[];
+extern const PROGMEM MonoGUI_FontCharInfoTypedef MonoGUI_font_legible3x5_6ptDescriptors[];
 
 #define MonoGUI_DOWN_CHAR			"{"
 #define MonoGUI_ROTATE_CHAR			"|"
