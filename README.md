@@ -16,7 +16,7 @@ Uses ![MonoGFX](https://github.com/19greg96/MonoGFX) to draw components to a byt
 
 ## Usage
 
- - Clone this repo, add `Inc/` to include directories and `Src/` to source directories.
+ - Clone this repo, add `Src/` to source directories.
  - Install ![MonoGFX](https://github.com/19greg96/MonoGFX) and create a `MonoGFX_DisplayTypedef` object.
  - Call `void MonoGUI_init();`
  - Create a default font:
