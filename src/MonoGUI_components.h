@@ -4,8 +4,9 @@
 
 #ifdef MONO_GUI_STM32
 	#include "stm32f4xx_hal.h"
+#ifdef MONO_GUI_STM32_USE_CMSIS
 	#include "arm_math.h"
-	
+#endif
 	#define MONO_GUI_getTick	HAL_GetTick
 	#define MONO_GUI_bkpt		__asm__ __volatile__ ("bkpt #0")
 #else // arduino
@@ -223,7 +224,7 @@ typedef struct MonoGUI_Graph {
 	MonoGUI_GraphLabel* vOffset2GraphLabel;
 	MonoGUI_GraphLabel* hOffsetGraphLabel;
 	
-#ifdef MONO_GUI_STM32
+#ifdef MONO_GUI_STM32_USE_CMSIS
 	arm_rfft_fast_instance_f32 FFTStruct;
 #endif
 	MonoGUI_GraphModeTypedef mode;

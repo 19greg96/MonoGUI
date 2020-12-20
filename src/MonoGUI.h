@@ -1,6 +1,7 @@
 #ifndef __MonoGUI_H
 #define __MonoGUI_H
 
+#include "MonoGUI_config.h"
 #include "MonoGUI_font.h"
 #include "MonoGUI_components.h"
 #include <stdint.h>

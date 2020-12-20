@@ -219,7 +219,7 @@ void MonoGUI_component_set_tabNext(MonoGUI_Component* component, MonoGUI_Compone
 }
 
 MonoGUI_Component* MonoGUI_component_create(MonoGUI_ComponentTypedef type, int32_t x, int32_t y, void* comp) {
-	MonoGUI_Component* component = (MonoGUI_Component*)malloc(sizeof(MonoGUI_Component));
+	MonoGUI_Component* component = (MonoGUI_Component*)MONO_GUI_MALLOC(sizeof(MonoGUI_Component));
 	
 	component->type = type;
 	component->x = x;
@@ -238,7 +238,7 @@ MonoGUI_Component* MonoGUI_component_create(MonoGUI_ComponentTypedef type, int32
 }
 
 MonoGUI_Label* MonoGUI_label_create(char* text, uint32_t fontID) {
-	MonoGUI_Label* label = (MonoGUI_Label*)malloc(sizeof(MonoGUI_Label));
+	MonoGUI_Label* label = (MonoGUI_Label*)MONO_GUI_MALLOC(sizeof(MonoGUI_Label));
 	
 	if (strlen(text) >= MonoGUI_LABEL_MAX_LEN - 1) {
 		MONO_GUI_bkpt;
@@ -262,7 +262,7 @@ void MonoGUI_label_getText(MonoGUI_Label* label, char* out) {
 }
 
 MonoGUI_Button* MonoGUI_button_create(char* text, uint32_t fontID, MonoGUI_CallbackTypedef onClick) {
-	MonoGUI_Button* button = (MonoGUI_Button*)malloc(sizeof(MonoGUI_Button));
+	MonoGUI_Button* button = (MonoGUI_Button*)MONO_GUI_MALLOC(sizeof(MonoGUI_Button));
 	
 	button->label = MonoGUI_label_create(text, fontID);
 	button->onClick = onClick;
@@ -274,7 +274,7 @@ void MonoGUI_button_render(MonoGUI_Button* button, int32_t x, int32_t y) {
 }
 
 MonoGUI_ScrollButton* MonoGUI_scrollButton_create(char* text, uint32_t fontID, float min, float max, float val, MonoGUI_CallbackTypedef onScroll) {
-	MonoGUI_ScrollButton* scrollButton = (MonoGUI_ScrollButton*)malloc(sizeof(MonoGUI_ScrollButton));
+	MonoGUI_ScrollButton* scrollButton = (MonoGUI_ScrollButton*)MONO_GUI_MALLOC(sizeof(MonoGUI_ScrollButton));
 	
 	if (strlen(text) >= MonoGUI_LABEL_MAX_LEN - 2) { // 1 char will be appended
 		MONO_GUI_bkpt;
@@ -337,7 +337,7 @@ void MonoGUI_scrollButton_scroll(MonoGUI_ScrollButton* scrollButton, int16_t del
 
 
 MonoGUI_Range* MonoGUI_range_create(char* text, uint32_t fontID, float min, float max, float val, MonoGUI_CallbackTypedef onScroll, uint32_t size, MonoGUI_StringFormatterTypedef valueFromatter) {
-	MonoGUI_Range* range = (MonoGUI_Range*)malloc(sizeof(MonoGUI_Range));
+	MonoGUI_Range* range = (MonoGUI_Range*)MONO_GUI_MALLOC(sizeof(MonoGUI_Range));
 	
 	range->scrollButton = MonoGUI_scrollButton_create(text, fontID, min, max, val, onScroll);
 	range->valueLabel = MonoGUI_label_create("", fontID);
@@ -391,7 +391,7 @@ void MonoGUI_range_select_render(MonoGUI_Range* range, int32_t x, int32_t y) {
 
 
 MonoGUI_ToggleButton* MonoGUI_toggleButton_create(char* defaultText, uint32_t fontID, MonoGUI_CallbackTypedef onClick) {
-	MonoGUI_ToggleButton* toggleButton = (MonoGUI_ToggleButton*)malloc(sizeof(MonoGUI_ToggleButton));
+	MonoGUI_ToggleButton* toggleButton = (MonoGUI_ToggleButton*)MONO_GUI_MALLOC(sizeof(MonoGUI_ToggleButton));
 	
 	if (strlen(defaultText) >= MonoGUI_LABEL_MAX_LEN - 1) {
 		MONO_GUI_bkpt;
@@ -435,7 +435,7 @@ void MonoGUI_toggleButton_click(MonoGUI_ToggleButton* toggleButton) {
 }
 
 MonoGUI_RadioButton* MonoGUI_radioButton_create(char* defaultText, uint32_t fontID, MonoGUI_CallbackTypedef onClick) {
-	MonoGUI_RadioButton* radioButton = (MonoGUI_RadioButton*)malloc(sizeof(MonoGUI_RadioButton));
+	MonoGUI_RadioButton* radioButton = (MonoGUI_RadioButton*)MONO_GUI_MALLOC(sizeof(MonoGUI_RadioButton));
 	
 	radioButton->toggleButton = MonoGUI_toggleButton_create(defaultText, fontID, onClick);
 	radioButton->toggleButton->showCheckbox = 0;
@@ -476,7 +476,7 @@ MonoGUI_RadioButton* MonoGUI_radioButton_get_selected(MonoGUI_RadioButton* radio
 }
 
 MonoGUI_MenuColumn* MonoGUI_menuColumn_create() {
-	MonoGUI_MenuColumn* menuColumn = (MonoGUI_MenuColumn*)malloc(sizeof(MonoGUI_MenuColumn));
+	MonoGUI_MenuColumn* menuColumn = (MonoGUI_MenuColumn*)MONO_GUI_MALLOC(sizeof(MonoGUI_MenuColumn));
 	
 	menuColumn->nextCol = menuColumn; // circular list
 	menuColumn->numRows = 0;
@@ -539,7 +539,7 @@ void MonoGUI_menuColumn_render(MonoGUI_MenuColumn* menuColumn, int32_t x, int32_
 }
 
 MonoGUI_Menu* MonoGUI_menu_create() {
-	MonoGUI_Menu* menu = (MonoGUI_Menu*)malloc(sizeof(MonoGUI_Menu));
+	MonoGUI_Menu* menu = (MonoGUI_Menu*)MONO_GUI_MALLOC(sizeof(MonoGUI_Menu));
 	
 	menu->columns = NULL;
 	
@@ -623,7 +623,7 @@ uint32_t MonoGUI_menu_get_num_columns(MonoGUI_Menu* menu) {
 }
 
 MonoGUI_MenuButton* MonoGUI_menuButton_create(char* defaultText, uint32_t fontID, MonoGUI_CallbackTypedef onClick, MonoGUI_Menu* menu) {
-	MonoGUI_MenuButton* menuButton = (MonoGUI_MenuButton*)malloc(sizeof(MonoGUI_MenuButton));
+	MonoGUI_MenuButton* menuButton = (MonoGUI_MenuButton*)MONO_GUI_MALLOC(sizeof(MonoGUI_MenuButton));
 	
 	if (strlen(defaultText) >= MonoGUI_LABEL_MAX_LEN - 2) { // 1 char will be appended
 		MONO_GUI_bkpt;
@@ -663,7 +663,7 @@ void MonoGUI_menuButton_click(MonoGUI_MenuButton* menuButton) {
 }
 
 MonoGUI_GraphLabel* MonoGUI_graphLabel_create(char* text, MonoGFX_LineStyleTypedef lineStyle, uint8_t floatRight, uint8_t vertical, uint32_t fontID, MonoGUI_CallbackTypedef onScroll) {
-	MonoGUI_GraphLabel* graphLabel = (MonoGUI_GraphLabel*)malloc(sizeof(MonoGUI_GraphLabel));
+	MonoGUI_GraphLabel* graphLabel = (MonoGUI_GraphLabel*)MONO_GUI_MALLOC(sizeof(MonoGUI_GraphLabel));
 	
 	graphLabel->scrollButton = MonoGUI_scrollButton_create(text, fontID, -1000000.0f, 1000000.0f, 0.0f, onScroll);
 	graphLabel->nextLabel = NULL;
@@ -796,7 +796,7 @@ void MonoGUI_graphLabel_select_render(MonoGUI_GraphLabel* graphLabel, int32_t x,
 }
 
 MonoGUI_Graph* MonoGUI_graph_create(uint32_t w, uint32_t h) {
-	MonoGUI_Graph* graph = (MonoGUI_Graph*)malloc(sizeof(MonoGUI_Graph));
+	MonoGUI_Graph* graph = (MonoGUI_Graph*)MONO_GUI_MALLOC(sizeof(MonoGUI_Graph));
 	
 	graph->w = w;
 	graph->h = h;
@@ -960,7 +960,7 @@ void MonoGUI_graph_render(MonoGUI_Graph* graph, int32_t x, int32_t y) {
 			} break;
 			case MonoGUI_GRAPH_MODE_1CH_FFT:
 			case MonoGUI_GRAPH_MODE_2CH_FFT: {
-#ifdef MONO_GUI_STM32
+#ifdef MONO_GUI_STM32_USE_CMSIS
 				// TODO: FFT goes wild when no trigger is occuring (because we write to other channels buffer, and it's not updated from last time)
 				// TODO: windowing function before FFT
 				float* inputBuffer;
@@ -1102,7 +1102,7 @@ void MonoGUI_graph_add_label(MonoGUI_Graph* graph, MonoGUI_Component* graphLabel
 }
 
 MonoGUI_Screen* MonoGUI_screen_create() {
-	MonoGUI_Screen* screen = (MonoGUI_Screen*)malloc(sizeof(MonoGUI_Screen));
+	MonoGUI_Screen* screen = (MonoGUI_Screen*)MONO_GUI_MALLOC(sizeof(MonoGUI_Screen));
 	
 	screen->numComponents = 0;
 	screen->defaultTabComponent = NULL;
@@ -1140,7 +1140,7 @@ void MonoGUI_screen_render(MonoGUI_Screen* screen, int32_t x, int32_t y) {
 }
 
 MonoGUI_Sprite* MonoGUI_sprite_create(MonoGUI_SpriteRenderCallbackTypedef renderCallback) {
-	MonoGUI_Sprite* sprite = (MonoGUI_Sprite*)malloc(sizeof(MonoGUI_Sprite));
+	MonoGUI_Sprite* sprite = (MonoGUI_Sprite*)MONO_GUI_MALLOC(sizeof(MonoGUI_Sprite));
 	
 	sprite->renderCallback = renderCallback;
 	

@@ -1,6 +1,7 @@
 #ifndef __MonoGUI_FONT__
 #define __MonoGUI_FONT__
 
+#include "MonoGUI_config.h"
 #include <stdint.h>
 
 #ifdef MONO_GUI_STM32
