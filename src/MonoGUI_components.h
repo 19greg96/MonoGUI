@@ -94,6 +94,7 @@ typedef struct MonoGUI_Label {
 MonoGUI_Label* MonoGUI_label_create(char* text, uint32_t fontID);
 void MonoGUI_label_render(MonoGUI_Label* label, int32_t x, int32_t y);
 void MonoGUI_label_getText(MonoGUI_Label* label, char* out);
+void MonoGUI_label_setText(MonoGUI_Label* label, char* text);
 
 typedef struct MonoGUI_Button {
 	MonoGUI_CallbackTypedef onClick;

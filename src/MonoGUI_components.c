@@ -260,6 +260,12 @@ void MonoGUI_label_render(MonoGUI_Label* label, int32_t x, int32_t y) {
 void MonoGUI_label_getText(MonoGUI_Label* label, char* out) {
 	label->formatter(out, (void*)label->value);
 }
+void MonoGUI_label_setText(MonoGUI_Label* label, char* text) {
+	if (strlen(text) >= MonoGUI_LABEL_MAX_LEN - 1) {
+		MONO_GUI_bkpt;
+	}
+	strcpy(label->value, text);
+}
 
 MonoGUI_Button* MonoGUI_button_create(char* text, uint32_t fontID, MonoGUI_CallbackTypedef onClick) {
 	MonoGUI_Button* button = (MonoGUI_Button*)MONO_GUI_MALLOC(sizeof(MonoGUI_Button));
